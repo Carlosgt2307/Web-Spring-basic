@@ -29,7 +29,6 @@
             </thead>
             <tbody id="tabla-clima"></tbody>
         </table>
-        <button id="nuevo-dato">Actualizar Datos</button>
         <button id="activar-cambio">Iniciar Cambio Automático</button>
         <button id="detener-cambio" style="display: none;">Detener Cambio Automático</button>
         <button onclick="window.location.href='/hola';">Volver a Hola</button>
@@ -42,6 +41,8 @@
             const response = await fetch('/data/clima');
             datos = await response.json();
             mostrarDatoAleatorio();
+            iniciarCambioAutomatico();
+            
         }
         function extraerMesAnio(fecha) {
             const date = new Date(fecha);
@@ -95,12 +96,9 @@
                 document.getElementById("detener-cambio").style.display = "none";
             }
         }
-
-        document.getElementById("nuevo-dato").addEventListener("click", mostrarDatoAleatorio);
         document.getElementById("activar-cambio").addEventListener("click", iniciarCambioAutomatico);
         document.getElementById("detener-cambio").addEventListener("click", detenerCambioAutomatico);
 
-        // Cargar datos al inicio
         cargarDatos();
     </script>
 
