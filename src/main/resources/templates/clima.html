@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="spanish">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/styles/styles.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clima</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Clima Actual</h1>
+        <div class="info">
+            <h3>Información de los Datos</h3>
+            <p style="padding: 0px 25px 0px 25px;">
+                Esta información proviene de la Biblioteca Mundial. Los valores de temperatura y precipitación
+                mostrados son promedios globales para un día específico en el mes correspondiente, calculados
+                a partir de mediciones recolectadas en todo el mundo.
+            </p>
+        </div>
+        <h2 id="mes-anio"></h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Año</th>
+                    <th>Mes</th>
+                    <th>Temperatura (°C)</th>
+                    <th>Precipitación (mm)</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-clima"></tbody>
+        </table>
+        <button id="nuevo-dato">Actualizar Datos</button>
+        <button id="activar-cambio">Iniciar Cambio Automático</button>
+        <button id="detener-cambio" style="display: none;">Detener Cambio Automático</button>
+        <button onclick="window.location.href='/hola';">Volver a Hola</button>
+    </div>
+    <script>
+         let datos = [];
+        let intervaloCambio = null;
+
+        async function cargarDatos() {
+            const response = await fetch('/data/clima');
+            datos = await response.json();
+            mostrarDatoAleatorio();
+        }
+
+        function determinarClase(valor, tipo) {
+            if (tipo === "temperatura") {
+                return valor < 20 ? "baja" : valor <= 30 ? "normal" : "alta";
+            }
+            if (tipo === "precipitacion") {
+                return valor < 10 ? "baja" : valor <= 20 ? "normal" : "alta";
+            }
+        }
+
+        function mostrarDatoAleatorio() {
+            if (datos.length === 0) return;
+
+            const indice = Math.floor(Math.random() * datos.length);
+            const dato = datos[indice];
+
+            const tbody = document.getElementById("tabla-clima");
+            tbody.innerHTML = `
+                <tr>
+                    <td>${dato.anio}</td>
+                    <td>${dato.mes}</td>
+                    <td class="${determinarClase(dato.temperatura, 'temperatura')}">${dato.temperatura}</td>
+                    <td class="${determinarClase(dato.precipitacion, 'precipitacion')}">${dato.precipitacion}</td>
+                </tr>
+            `;
+        }
+
+        function iniciarCambioAutomatico() {
+            if (!intervaloCambio) {
+                intervaloCambio = setInterval(mostrarDatoAleatorio, 1000);
+                document.getElementById("activar-cambio").style.display = "none";
+                document.getElementById("detener-cambio").style.display = "inline-block";
+            }
+        }
+
+        function detenerCambioAutomatico() {
+            if (intervaloCambio) {
+                clearInterval(intervaloCambio);
+                intervaloCambio = null;
+                document.getElementById("activar-cambio").style.display = "inline-block";
+                document.getElementById("detener-cambio").style.display = "none";
+            }
+        }
+
+        document.getElementById("nuevo-dato").addEventListener("click", mostrarDatoAleatorio);
+        document.getElementById("activar-cambio").addEventListener("click", iniciarCambioAutomatico);
+        document.getElementById("detener-cambio").addEventListener("click", detenerCambioAutomatico);
+
+        // Cargar datos al inicio
+        cargarDatos();
+
+    </script>
+
+
+</body>
+</html>
