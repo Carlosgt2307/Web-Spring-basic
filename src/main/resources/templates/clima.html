@@ -11,7 +11,7 @@
         <h1>Clima Actual</h1>
         <div class="info">
             <h3>Información de los Datos</h3>
-            <p style="padding: 0px 25px 0px 25px;">
+            <p>
                 Esta información proviene de la Biblioteca Mundial. Los valores de temperatura y precipitación
                 mostrados son promedios globales para un día específico en el mes correspondiente, calculados
                 a partir de mediciones recolectadas en todo el mundo.
@@ -43,6 +43,14 @@
             datos = await response.json();
             mostrarDatoAleatorio();
         }
+        function extraerMesAnio(fecha) {
+            const date = new Date(fecha);
+            const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            return { 
+                mes: meses[date.getMonth()],
+                anio: date.getFullYear()
+            };
+        }
 
         function determinarClase(valor, tipo) {
             if (tipo === "temperatura") {
@@ -58,14 +66,15 @@
 
             const indice = Math.floor(Math.random() * datos.length);
             const dato = datos[indice];
+            const { mes, anio } = extraerMesAnio(dato.time);
 
             const tbody = document.getElementById("tabla-clima");
             tbody.innerHTML = `
                 <tr>
-                    <td>${dato.anio}</td>
-                    <td>${dato.mes}</td>
-                    <td class="${determinarClase(dato.temperatura, 'temperatura')}">${dato.temperatura}</td>
-                    <td class="${determinarClase(dato.precipitacion, 'precipitacion')}">${dato.precipitacion}</td>
+                    <td>${anio}</td>
+                    <td>${mes}</td>
+                    <td class="${determinarClase(dato["timeseries-tas-monthly-mean"], 'temperatura')}">${dato["timeseries-tas-monthly-mean"].toFixed(2)}</td>
+                    <td class="${determinarClase(dato["timeseries-pr-monthly-mean"], 'precipitacion')}">${dato["timeseries-pr-monthly-mean"].toFixed(2)}</td>
                 </tr>
             `;
         }
@@ -93,7 +102,6 @@
 
         // Cargar datos al inicio
         cargarDatos();
-
     </script>
 
 
