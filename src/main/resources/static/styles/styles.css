@@ -86,3 +86,22 @@ button:hover {
   text-align: left;
   color: #d3d3d3;
 }
+.baja {
+  background-color: #f28b82;
+}
+.baja-texto{
+  color:  #f28b82;
+}
+
+.media {
+  background-color: #fbbc04;
+}
+.media-texto{
+  color: #fbbc04;
+}
+.alta {
+  background-color: #34a853;
+}
+.alta-texto{
+  color: #34a853;
+}
